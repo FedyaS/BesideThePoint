@@ -5,7 +5,6 @@ import logging
 import threading
 import time
 from concurrent.futures import ProcessPoolExecutor
-import atexit
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
@@ -103,9 +102,6 @@ def compute(total_trials, num_workers=24, batch_size=1000000, log_interval=10, s
     solutions = Value('q', count_solutions)
     trials_run = Value('q', count_run)
 
-    # Save progress on exit
-    atexit.register(save_progress, solutions.value, trials_run.value, 'progress.json')
-
     # Start logger thread
     logger = threading.Thread(
         target=logger_thread,
@@ -134,6 +130,6 @@ def compute(total_trials, num_workers=24, batch_size=1000000, log_interval=10, s
     return solutions.value / trials_run.value if trials_run.value > 0 else 0
 
 if __name__ == "__main__":
-    total_trials = 15000000000
+    total_trials = 15000000000000
     result = compute(total_trials)
     logging.info(f"Final probability: {result:.7f}")
