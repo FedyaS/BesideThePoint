@@ -71,7 +71,7 @@ def load_progress(filename='progress.json'):
             return data['count_solutions'], data['count_run']
     return 0, 0
 
-def logger_thread(solutions, trials_run, total_trials, log_interval=10, save_interval=10, filename='progress.json'):
+def logger_thread(solutions, trials_run, total_trials, log_interval=10, save_interval=20, filename='progress.json'):
     """Periodically log and save progress."""
     start_time = time.time()
     while trials_run.value < total_trials:
@@ -88,7 +88,7 @@ def logger_thread(solutions, trials_run, total_trials, log_interval=10, save_int
             start_time = time.time()
     save_progress(solutions.value, trials_run.value, filename)
 
-def compute(total_trials, num_workers=24, batch_size=1000000, log_interval=10, save_interval=10):
+def compute(total_trials, num_workers=24, batch_size=1000000, log_interval=10, save_interval=20):
     """Compute trials using NumPy vectorization and multiprocessing."""
     count_solutions, count_run = load_progress()
     trials_remaining = total_trials - count_run
