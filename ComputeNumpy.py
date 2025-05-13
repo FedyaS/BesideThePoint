@@ -5,7 +5,6 @@ import logging
 import threading
 import time
 from concurrent.futures import ProcessPoolExecutor
-import atexit
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
@@ -102,9 +101,6 @@ def compute(total_trials, num_workers=24, batch_size=1000000, log_interval=10, s
     solutions = Value('q', count_solutions)
     trials_run = Value('q', count_run)
 
-    # Save progress on exit
-    atexit.register(save_progress, solutions.value, trials_run.value, 'progress.json')
-
     # Start logger thread
     logger = threading.Thread(
         target=logger_thread,
@@ -113,23 +109,28 @@ def compute(total_trials, num_workers=24, batch_size=1000000, log_interval=10, s
     )
     logger.start()
 
-    # Run trials in parallel
-    with ProcessPoolExecutor(max_workers=num_workers) as executor:
-        futures = []
-        while trials_remaining > 0:
-            current_batch = min(batch_size, trials_remaining)
-            futures.append(executor.submit(vectorized_trial, current_batch))
-            trials_remaining -= current_batch
+    try:
+        with ProcessPoolExecutor(max_workers=num_workers) as executor:
+            futures = []
+            while trials_remaining > 0:
+                current_batch = min(batch_size, trials_remaining)
+                futures.append(executor.submit(vectorized_trial, current_batch))
+                trials_remaining -= current_batch
 
-        # Collect results
-        for future in futures:
-            batch_solutions, batch_trials = future.result()
-            with solutions.get_lock():
-                solutions.value += batch_solutions
-            with trials_run.get_lock():
-                trials_run.value += batch_trials
+            # Collect results
+            for future in futures:
+                batch_solutions, batch_trials = future.result()
+                with solutions.get_lock():
+                    solutions.value += batch_solutions
+                with trials_run.get_lock():
+                    trials_run.value += batch_trials
 
-    logger.join(timeout=5)
+    except KeyboardInterrupt:
+        logging.info("Interrupted by user")
+    finally:
+        save_progress(solutions.value, trials_run.value, 'progress.json')
+        logger.join(timeout=5)
+
     return solutions.value / trials_run.value if trials_run.value > 0 else 0
 
 if __name__ == "__main__":
