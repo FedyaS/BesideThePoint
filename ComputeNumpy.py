@@ -62,6 +62,7 @@ def save_progress(count_solutions, count_run, filename='progress.json'):
     data = {'count_solutions': int(count_solutions), 'count_run': int(count_run)}
     with open(filename, 'w') as f:
         json.dump(data, f)
+    print('Saved to file')
 
 def load_progress(filename='progress.json'):
     """Load progress from a JSON file."""
