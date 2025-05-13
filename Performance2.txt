@@ -1,0 +1,13 @@
+2025-05-12 16:39:02,451 - Trials: 58,640,000 | Solutions: 28,819,279 | Probability: 0.4915
+2025-05-12 16:39:12,557 - Trials: 71,510,000 | Solutions: 35,142,799 | Probability: 0.4914
+2025-05-12 16:39:22,607 - Trials: 84,350,000 | Solutions: 41,453,830 | Probability: 0.4915
+2025-05-12 16:39:32,623 - Trials: 96,810,000 | Solutions: 47,575,105 | Probability: 0.4914
+2025-05-12 16:39:42,673 - Trials: 108,320,000 | Solutions: 53,231,598 | Probability: 0.4914
+2025-05-12 16:39:52,688 - Trials: 120,140,000 | Solutions: 59,042,063 | Probability: 0.4914
+2025-05-12 16:40:02,878 - Trials: 132,450,000 | Solutions: 65,091,474 | Probability: 0.4914
+2025-05-12 16:40:12,955 - Trials: 144,340,000 | Solutions: 70,936,363 | Probability: 0.4915
+2025-05-12 16:40:23,042 - Trials: 156,190,000 | Solutions: 76,758,014 | Probability: 0.4914
+2025-05-12 16:40:33,190 - Trials: 168,790,000 | Solutions: 82,948,793 | Probability: 0.4914
+2025-05-12 16:40:43,277 - Trials: 179,230,000 | Solutions: 88,079,129 | Probability: 0.4914
+2025-05-12 16:40:53,328 - Trials: 189,870,000 | Solutions: 93,308,159 | Probability: 0.4914
+2025-05-12 16:41:03,420 - Trials: 201,160,000 | Solutions: 98,857,729 | Probability: 0.4914
