@@ -1,0 +1,97 @@
+C:\Users\fedse\Documents\Github\BesideThePoint\.venv\Scripts\python.exe C:\Users\fedse\Documents\Github\BesideThePoint\ComputeCupy.py
+2025-05-16 15:30:22,887 - Loaded - Trials: 0 | Solutions: 0 | Probability: 0.000000000000
+2025-05-16 15:30:22,887 - Logger thread started.
+2025-05-16 15:30:32,888 - Progress - Trials: 1,350,000,000 | Solutions: 663,423,810 | Probability: 0.491425044444
+2025-05-16 15:30:42,888 - Progress - Trials: 2,730,000,000 | Solutions: 1,341,559,249 | Probability: 0.491413644322
+2025-05-16 15:30:42,889 - Saved: {'count_solutions': 1341559249, 'count_run': 2730000000} to progress-gpu.json
+2025-05-16 15:30:52,890 - Progress - Trials: 4,120,000,000 | Solutions: 2,024,618,183 | Probability: 0.491412180340
+2025-05-16 15:31:02,890 - Progress - Trials: 5,510,000,000 | Solutions: 2,707,709,277 | Probability: 0.491417291652
+2025-05-16 15:31:02,890 - Saved: {'count_solutions': 2707709277, 'count_run': 5510000000} to progress-gpu.json
+2025-05-16 15:31:12,891 - Progress - Trials: 6,890,000,000 | Solutions: 3,385,842,755 | Probability: 0.491414042816
+2025-05-16 15:31:22,891 - Progress - Trials: 8,270,000,000 | Solutions: 4,064,035,215 | Probability: 0.491419010278
+2025-05-16 15:31:22,891 - Saved: {'count_solutions': 4064035215, 'count_run': 8270000000} to progress-gpu.json
+2025-05-16 15:31:32,892 - Progress - Trials: 9,660,000,000 | Solutions: 4,747,071,931 | Probability: 0.491415313768
+2025-05-16 15:31:42,892 - Progress - Trials: 11,050,000,000 | Solutions: 5,430,137,228 | Probability: 0.491415133756
+2025-05-16 15:31:42,892 - Saved: {'count_solutions': 5430137228, 'count_run': 11050000000} to progress-gpu.json
+2025-05-16 15:31:52,893 - Progress - Trials: 12,450,000,000 | Solutions: 6,118,110,254 | Probability: 0.491414478233
+2025-05-16 15:32:02,893 - Progress - Trials: 13,850,000,000 | Solutions: 6,806,095,267 | Probability: 0.491414820722
+2025-05-16 15:32:02,893 - Saved: {'count_solutions': 6806095267, 'count_run': 13850000000} to progress-gpu.json
+2025-05-16 15:32:12,894 - Progress - Trials: 15,240,000,000 | Solutions: 7,489,152,697 | Probability: 0.491414218963
+2025-05-16 15:32:22,894 - Progress - Trials: 16,640,000,000 | Solutions: 8,177,121,801 | Probability: 0.491413569772
+2025-05-16 15:32:22,895 - Saved: {'count_solutions': 8177121801, 'count_run': 16640000000} to progress-gpu.json
+2025-05-16 15:32:32,895 - Progress - Trials: 18,030,000,000 | Solutions: 8,860,192,679 | Probability: 0.491413903439
+2025-05-16 15:32:42,896 - Progress - Trials: 19,430,000,000 | Solutions: 9,548,157,894 | Probability: 0.491413170046
+2025-05-16 15:32:42,896 - Saved: {'count_solutions': 9548157894, 'count_run': 19430000000} to progress-gpu.json
+2025-05-16 15:32:52,897 - Progress - Trials: 20,830,000,000 | Solutions: 10,236,110,558 | Probability: 0.491411932693
+2025-05-16 15:33:02,897 - Progress - Trials: 22,230,000,000 | Solutions: 10,924,101,221 | Probability: 0.491412560549
+2025-05-16 15:33:02,897 - Saved: {'count_solutions': 10924101221, 'count_run': 22230000000} to progress-gpu.json
+2025-05-16 15:33:12,898 - Progress - Trials: 23,620,000,000 | Solutions: 11,607,190,903 | Probability: 0.491413670745
+2025-05-16 15:33:22,898 - Progress - Trials: 25,010,000,000 | Solutions: 12,290,262,650 | Probability: 0.491413940424
+2025-05-16 15:33:22,898 - Saved: {'count_solutions': 12290262650, 'count_run': 25010000000} to progress-gpu.json
+2025-05-16 15:33:32,899 - Progress - Trials: 26,410,000,000 | Solutions: 12,978,204,755 | Probability: 0.491412523855
+2025-05-16 15:33:42,900 - Progress - Trials: 27,810,000,000 | Solutions: 13,666,182,651 | Probability: 0.491412536893
+2025-05-16 15:33:42,900 - Saved: {'count_solutions': 13666182651, 'count_run': 27810000000} to progress-gpu.json
+2025-05-16 15:33:52,901 - Progress - Trials: 29,210,000,000 | Solutions: 14,354,147,181 | Probability: 0.491412091099
+2025-05-16 15:34:02,901 - Progress - Trials: 30,610,000,000 | Solutions: 15,042,112,763 | Probability: 0.491411720451
+2025-05-16 15:34:02,901 - Saved: {'count_solutions': 15042112763, 'count_run': 30610000000} to progress-gpu.json
+2025-05-16 15:34:12,902 - Progress - Trials: 32,010,000,000 | Solutions: 15,730,072,674 | Probability: 0.491411205061
+2025-05-16 15:34:22,903 - Progress - Trials: 33,410,000,000 | Solutions: 16,418,047,707 | Probability: 0.491411185483
+2025-05-16 15:34:22,903 - Saved: {'count_solutions': 16418047707, 'count_run': 33410000000} to progress-gpu.json
+2025-05-16 15:34:32,904 - Progress - Trials: 34,810,000,000 | Solutions: 17,105,992,651 | Probability: 0.491410303103
+2025-05-16 15:34:42,904 - Progress - Trials: 36,210,000,000 | Solutions: 17,793,966,966 | Probability: 0.491410300083
+2025-05-16 15:34:42,904 - Saved: {'count_solutions': 17793966966, 'count_run': 36210000000} to progress-gpu.json
+2025-05-16 15:34:52,905 - Progress - Trials: 37,610,000,000 | Solutions: 18,481,937,331 | Probability: 0.491410192263
+2025-05-16 15:35:02,906 - Progress - Trials: 39,010,000,000 | Solutions: 19,169,901,365 | Probability: 0.491409929890
+2025-05-16 15:35:02,906 - Saved: {'count_solutions': 19169901365, 'count_run': 39010000000} to progress-gpu.json
+2025-05-16 15:35:12,907 - Progress - Trials: 40,410,000,000 | Solutions: 19,857,880,489 | Probability: 0.491410059119
+2025-05-16 15:35:22,907 - Progress - Trials: 41,810,000,000 | Solutions: 20,545,843,894 | Probability: 0.491409803731
+2025-05-16 15:35:22,908 - Saved: {'count_solutions': 20545843894, 'count_run': 41810000000} to progress-gpu.json
+2025-05-16 15:35:32,908 - Progress - Trials: 43,210,000,000 | Solutions: 21,233,817,860 | Probability: 0.491409809303
+2025-05-16 15:35:42,909 - Progress - Trials: 44,610,000,000 | Solutions: 21,921,813,666 | Probability: 0.491410304102
+2025-05-16 15:35:42,909 - Saved: {'count_solutions': 21921813666, 'count_run': 44610000000} to progress-gpu.json
+2025-05-16 15:35:52,909 - Progress - Trials: 46,010,000,000 | Solutions: 22,609,801,060 | Probability: 0.491410585960
+2025-05-16 15:36:02,910 - Progress - Trials: 47,400,000,000 | Solutions: 23,292,852,051 | Probability: 0.491410380823
+2025-05-16 15:36:02,910 - Saved: {'count_solutions': 23292852051, 'count_run': 47400000000} to progress-gpu.json
+2025-05-16 15:36:12,911 - Progress - Trials: 48,800,000,000 | Solutions: 23,980,817,060 | Probability: 0.491410185656
+2025-05-16 15:36:22,911 - Progress - Trials: 50,200,000,000 | Solutions: 24,668,787,358 | Probability: 0.491410106733
+2025-05-16 15:36:22,911 - Saved: {'count_solutions': 24668787358, 'count_run': 50200000000} to progress-gpu.json
+2025-05-16 15:36:32,912 - Progress - Trials: 51,600,000,000 | Solutions: 25,356,762,549 | Probability: 0.491410126919
+2025-05-16 15:36:42,912 - Progress - Trials: 53,000,000,000 | Solutions: 26,044,727,257 | Probability: 0.491409948245
+2025-05-16 15:36:42,913 - Saved: {'count_solutions': 26044727257, 'count_run': 53000000000} to progress-gpu.json
+2025-05-16 15:36:52,913 - Progress - Trials: 54,390,000,000 | Solutions: 26,727,818,392 | Probability: 0.491410523846
+2025-05-16 15:37:02,914 - Progress - Trials: 55,790,000,000 | Solutions: 27,415,803,497 | Probability: 0.491410709751
+2025-05-16 15:37:02,914 - Saved: {'count_solutions': 27415803497, 'count_run': 55790000000} to progress-gpu.json
+2025-05-16 15:37:12,915 - Progress - Trials: 57,190,000,000 | Solutions: 28,103,767,153 | Probability: 0.491410511506
+2025-05-16 15:37:22,915 - Progress - Trials: 58,590,000,000 | Solutions: 28,791,745,106 | Probability: 0.491410566752
+2025-05-16 15:37:22,916 - Saved: {'count_solutions': 28791745106, 'count_run': 58590000000} to progress-gpu.json
+2025-05-16 15:37:32,916 - Progress - Trials: 59,990,000,000 | Solutions: 29,479,704,662 | Probability: 0.491410312752
+2025-05-16 15:37:42,916 - Progress - Trials: 61,380,000,000 | Solutions: 30,162,741,961 | Probability: 0.491409937455
+2025-05-16 15:37:42,917 - Saved: {'count_solutions': 30162741961, 'count_run': 61380000000} to progress-gpu.json
+2025-05-16 15:37:52,917 - Progress - Trials: 62,780,000,000 | Solutions: 30,850,703,098 | Probability: 0.491409733960
+2025-05-16 15:38:02,918 - Progress - Trials: 64,180,000,000 | Solutions: 31,538,664,678 | Probability: 0.491409546245
+2025-05-16 15:38:02,918 - Saved: {'count_solutions': 31538664678, 'count_run': 64180000000} to progress-gpu.json
+2025-05-16 15:38:12,919 - Progress - Trials: 65,580,000,000 | Solutions: 32,226,626,823 | Probability: 0.491409375160
+2025-05-16 15:38:22,919 - Progress - Trials: 66,980,000,000 | Solutions: 32,914,618,791 | Probability: 0.491409656480
+2025-05-16 15:38:22,920 - Saved: {'count_solutions': 32914618791, 'count_run': 66980000000} to progress-gpu.json
+2025-05-16 15:38:32,920 - Progress - Trials: 68,380,000,000 | Solutions: 33,602,586,840 | Probability: 0.491409576484
+2025-05-16 15:38:42,920 - Progress - Trials: 69,780,000,000 | Solutions: 34,290,545,187 | Probability: 0.491409360662
+2025-05-16 15:38:42,921 - Saved: {'count_solutions': 34290545187, 'count_run': 69780000000} to progress-gpu.json
+2025-05-16 15:38:52,921 - Progress - Trials: 71,170,000,000 | Solutions: 34,973,620,677 | Probability: 0.491409592202
+2025-05-16 15:39:02,921 - Progress - Trials: 72,570,000,000 | Solutions: 35,661,584,996 | Probability: 0.491409466667
+2025-05-16 15:39:02,922 - Saved: {'count_solutions': 35661584996, 'count_run': 72570000000} to progress-gpu.json
+2025-05-16 15:39:12,922 - Progress - Trials: 73,970,000,000 | Solutions: 36,349,572,817 | Probability: 0.491409663607
+2025-05-16 15:39:22,923 - Progress - Trials: 75,370,000,000 | Solutions: 37,037,529,429 | Probability: 0.491409439154
+2025-05-16 15:39:22,923 - Saved: {'count_solutions': 37037529429, 'count_run': 75370000000} to progress-gpu.json
+2025-05-16 15:39:32,924 - Progress - Trials: 76,770,000,000 | Solutions: 37,725,496,904 | Probability: 0.491409364387
+2025-05-16 15:39:42,924 - Progress - Trials: 78,170,000,000 | Solutions: 38,413,470,273 | Probability: 0.491409367699
+2025-05-16 15:39:42,924 - Saved: {'count_solutions': 38413470273, 'count_run': 78170000000} to progress-gpu.json
+2025-05-16 15:39:52,925 - Progress - Trials: 79,570,000,000 | Solutions: 39,101,452,063 | Probability: 0.491409476725
+2025-05-16 15:40:02,925 - Progress - Trials: 80,960,000,000 | Solutions: 39,784,495,745 | Probability: 0.491409285388
+2025-05-16 15:40:02,925 - Saved: {'count_solutions': 39784495745, 'count_run': 80960000000} to progress-gpu.json
+2025-05-16 15:40:12,926 - Progress - Trials: 82,360,000,000 | Solutions: 40,472,469,673 | Probability: 0.491409296661
+2025-05-16 15:40:22,926 - Progress - Trials: 83,760,000,000 | Solutions: 41,160,426,752 | Probability: 0.491409106399
+2025-05-16 15:40:22,927 - Saved: {'count_solutions': 41160426752, 'count_run': 83760000000} to progress-gpu.json
+2025-05-16 15:40:32,927 - Progress - Trials: 85,160,000,000 | Solutions: 41,848,399,543 | Probability: 0.491409106893
+2025-05-16 15:40:42,927 - Progress - Trials: 86,560,000,000 | Solutions: 42,536,370,474 | Probability: 0.491409085883
+2025-05-16 15:40:42,927 - Saved: {'count_solutions': 42536370474, 'count_run': 86560000000} to progress-gpu.json
+2025-05-16 15:40:52,928 - Progress - Trials: 87,960,000,000 | Solutions: 43,224,360,755 | Probability: 0.491409285528

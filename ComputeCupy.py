@@ -73,61 +73,91 @@ def load_progress(filename='progress-gpu.json'):
             return data['count_solutions'], data['count_run']
     return 0, 0
 
-def logger_thread(solutions, trials_run, total_trials, log_interval=10, save_interval=20, filename='progress-gpu.json'):
+def logger_thread(progress_state, total_trials, log_interval=10, save_interval=20, filename='progress-gpu.json'):
     """Periodically log and save progress."""
-    start_time = time.time()
-    while trials_run < total_trials:
+    last_save_time = time.time()
+    logging.info("Logger thread started.")
+
+    while progress_state['trials_run'] < total_trials:
+        # Calculate how long to sleep. If log_interval is already passed since last theoretical log time, log immediately.
+        # This aims for more regular logging intervals.
+        # However, a simple sleep is often sufficient and less complex.
+        # For now, sticking to simple sleep.
         time.sleep(log_interval)
-        current_solutions = solutions
-        current_trials = trials_run
+
+        current_solutions = progress_state['solutions']
+        current_trials = progress_state['trials_run']
+
+        # Check if total_trials reached during sleep or by another quick update
+        if not (current_trials < total_trials):
+            break
+
         probability = current_solutions / current_trials if current_trials > 0 else 0
         logging.info(
-            f"Trials: {current_trials:,} | Solutions: {current_solutions:,} | "
+            f"Progress - Trials: {current_trials:,} | Solutions: {current_solutions:,} | "
             f"Probability: {probability:.12f}"
         )
-        if (time.time() - start_time) >= save_interval:
+
+        if (time.time() - last_save_time) >= save_interval:
             save_progress(current_solutions, current_trials, filename)
-            start_time = time.time()
-    save_progress(solutions, trials_run, filename)
+            last_save_time = time.time()
+
+    # Final save when loop terminates (either total_trials reached or compute is ending)
+    final_solutions = progress_state['solutions']
+    final_trials = progress_state['trials_run']
+    save_progress(final_solutions, final_trials, filename)
+    logging.info(
+        f"Logger thread: Final save. Trials: {final_trials:,} | Solutions: {final_solutions:,}"
+    )
 
 def compute(total_trials, batch_size=10_000_000, log_interval=10, save_interval=20):
     """Compute trials on GPU using CuPy."""
-    count_solutions, count_run = load_progress()
-    trials_remaining = total_trials - count_run
+    initial_solutions, initial_run = load_progress()
+    
+    progress_state = {'solutions': initial_solutions, 'trials_run': initial_run}
 
-    probability = count_solutions / count_run if count_run > 0 else 0
+    trials_remaining = total_trials - progress_state['trials_run']
+
+    probability = progress_state['solutions'] / progress_state['trials_run'] if progress_state['trials_run'] > 0 else 0
     logging.info(
-        f"Trials: {count_run:,} | Solutions: {count_solutions:,} | "
+        f"Loaded - Trials: {progress_state['trials_run']:,} | Solutions: {progress_state['solutions']:,} | "
         f"Probability: {probability:.12f}"
     )
 
     if trials_remaining <= 0:
         logging.info("All trials completed previously.")
-        return count_solutions / total_trials if total_trials > 0 else 0
-
-    # Use Python's arbitrary-precision integers for counters
-    solutions = count_solutions
-    trials_run = count_run
+        # If all trials were completed, the probability is based on total_trials expected.
+        # Or, if progress_state['trials_run'] > 0, use that as denominator.
+        # Original used total_trials. Let's stick to that if it's the target.
+        if total_trials > 0:
+            return progress_state['solutions'] / total_trials
+        elif progress_state['trials_run'] > 0: # If total_trials is 0, but we ran some
+            return progress_state['solutions'] / progress_state['trials_run']
+        else: # total_trials is 0 and no runs
+            return 0
 
     # Start logger thread
     logger = threading.Thread(
         target=logger_thread,
-        args=(solutions, trials_run, total_trials, log_interval, save_interval),
+        args=(progress_state, total_trials, log_interval, save_interval, 'progress-gpu.json'), # Pass filename explicitly
         daemon=True
     )
     logger.start()
 
     seed = 0
-    while trials_run < total_trials:
-        current_batch = min(batch_size, total_trials - trials_run)
+    while progress_state['trials_run'] < total_trials:
+        current_batch = min(batch_size, total_trials - progress_state['trials_run'])
         batch_solutions, batch_trials = vectorized_trial(current_batch, seed)
-        batch_solutions = int(batch_solutions.get())  # Transfer to CPU
-        solutions += batch_solutions
-        trials_run += batch_trials
+        
+        # Ensure batch_solutions is a Python int before adding
+        batch_solutions_int = int(batch_solutions.get())
+        
+        progress_state['solutions'] += batch_solutions_int
+        progress_state['trials_run'] += batch_trials
         seed += 1
 
-    logger.join(timeout=5)
-    return solutions / trials_run if trials_run > 0 else 0
+    logger.join(timeout=log_interval + save_interval + 5) # Give ample time for final log/save
+    return progress_state['solutions'] / progress_state['trials_run'] if progress_state['trials_run'] > 0 else 0
 
 if __name__ == "__main__":
     total_trials = 15_000_000_000_000
