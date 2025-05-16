@@ -63,7 +63,7 @@ def save_progress(count_solutions, count_run, filename='progress.json'):
     data = {'count_solutions': int(count_solutions), 'count_run': int(count_run)}
     with open(filename, 'w') as f:
         json.dump(data, f)
-    logging.info(f"Saved {data} to {filename}")
+    logging.info(f"Saved: {data} to {filename}")
 
 # LIMIT MAX integer value ~ 9,007,199,254,740,991
 def load_progress(filename='progress.json'):
@@ -91,7 +91,7 @@ def logger_thread(solutions, trials_run, total_trials, log_interval=10, save_int
             start_time = time.time()
     save_progress(solutions.value, trials_run.value, filename)
 
-def compute(total_trials, num_workers=24, batch_size=1000000, log_interval=10, save_interval=20):
+def compute(total_trials, num_workers=12, batch_size=1000000, log_interval=10, save_interval=20):
     """Compute trials using NumPy vectorization and multiprocessing."""
     count_solutions, count_run = load_progress()
     trials_remaining = total_trials - count_run
