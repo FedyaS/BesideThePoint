@@ -9,7 +9,7 @@ from BesideThePoint import trial
 pygame.init()
 
 # Window setup
-WIDTH, HEIGHT = 1000, 1000
+WIDTH, HEIGHT = 800, 800
 OFFSET_X, OFFSET_Y = 200, 200
 screen = pygame.display.set_mode((WIDTH+OFFSET_X, HEIGHT+OFFSET_Y))
 pygame.display.set_caption("Geometric Simulation")

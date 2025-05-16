@@ -5,6 +5,7 @@ import logging
 import threading
 import time
 from concurrent.futures import ProcessPoolExecutor
+import concurrent.futures
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
@@ -56,13 +57,15 @@ def vectorized_trial(num_trials):
 
     return np.sum(solutions), num_trials
 
+# LIMIT MAX integer value ~ 9,007,199,254,740,991
 def save_progress(count_solutions, count_run, filename='progress.json'):
     """Save current progress to a JSON file."""
     data = {'count_solutions': int(count_solutions), 'count_run': int(count_run)}
     with open(filename, 'w') as f:
         json.dump(data, f)
-    print('Saved to file')
+    logging.info(f"Saved {data} to {filename}")
 
+# LIMIT MAX integer value ~ 9,007,199,254,740,991
 def load_progress(filename='progress.json'):
     """Load progress from a JSON file."""
     if os.path.exists(filename):
@@ -81,7 +84,7 @@ def logger_thread(solutions, trials_run, total_trials, log_interval=10, save_int
         probability = current_solutions / current_trials if current_trials > 0 else 0
         logging.info(
             f"Trials: {current_trials:,} | Solutions: {current_solutions:,} | "
-            f"Probability: {probability:.7f}"
+            f"Probability: {probability:.12f}"
         )
         if (time.time() - start_time) >= save_interval:
             save_progress(current_solutions, current_trials, filename)
@@ -93,14 +96,20 @@ def compute(total_trials, num_workers=24, batch_size=1000000, log_interval=10, s
     count_solutions, count_run = load_progress()
     trials_remaining = total_trials - count_run
 
+    probability = count_solutions / count_run if count_run > 0 else 0
+    logging.info(
+        f"Trials: {count_run:,} | Solutions: {count_solutions:,} | "
+        f"Probability: {probability:.12f}"
+    )
+
     if trials_remaining <= 0:
         logging.info("All trials completed previously.")
         return count_solutions / total_trials if total_trials > 0 else 0
 
     # Shared counters
     from multiprocessing import Value
-    solutions = Value('q', count_solutions)
-    trials_run = Value('q', count_run)
+    solutions = Value('Q', count_solutions)
+    trials_run = Value('Q', count_run)
 
     # Start logger thread
     logger = threading.Thread(
@@ -112,19 +121,55 @@ def compute(total_trials, num_workers=24, batch_size=1000000, log_interval=10, s
 
     # Run trials in parallel
     with ProcessPoolExecutor(max_workers=num_workers) as executor:
-        futures = []
-        while trials_remaining > 0:
-            current_batch = min(batch_size, trials_remaining)
-            futures.append(executor.submit(vectorized_trial, current_batch))
-            trials_remaining -= current_batch
+        active_futures = set()
+        
+        # Tracks the cumulative number of trials submitted or loaded as already run.
+        submitted_trials_total = count_run 
 
-        # Collect results
-        for future in futures:
-            batch_solutions, batch_trials = future.result()
+        # Initial submissions: fill workers or submit all remaining trials.
+        # Submit up to num_workers tasks to start, or fewer if not enough trials remain.
+        for _ in range(num_workers):
+            if submitted_trials_total < total_trials:
+                current_batch_to_submit = min(batch_size, total_trials - submitted_trials_total)
+                if current_batch_to_submit <= 0: 
+                    break 
+                future = executor.submit(vectorized_trial, current_batch_to_submit)
+                active_futures.add(future)
+                submitted_trials_total += current_batch_to_submit
+            else: # All trials accounted for in submissions, or no more trials to submit.
+                break 
+
+        # Process futures as they complete and submit new ones if needed.
+        # This loop continues as long as there are active futures (tasks in flight).
+        while active_futures:
+            # Wait for the next future to complete.
+            # as_completed() yields an iterator over futures from the 'active_futures' set as they complete.
+            done_iterator = concurrent.futures.as_completed(active_futures)
+            
+            completed_future = next(done_iterator) # Get the first completed future (blocks until one is ready)
+
+            try:
+                batch_solutions, batch_trials_from_future = completed_future.result()
+            except Exception as e:
+                logging.error(f"A trial batch encountered an error: {e}. Skipping this batch's results.")
+                active_futures.remove(completed_future) # Ensure problematic future is removed
+                continue # Proceed to the next iteration to wait for another future.
+
+            # Successfully got result, now remove from active set.
+            active_futures.remove(completed_future)
+
             with solutions.get_lock():
                 solutions.value += batch_solutions
             with trials_run.get_lock():
-                trials_run.value += batch_trials
+                trials_run.value += batch_trials_from_future
+            
+            # If there are still more trials to be submitted overall, dispatch a new task.
+            if submitted_trials_total < total_trials:
+                current_batch_to_submit = min(batch_size, total_trials - submitted_trials_total)
+                if current_batch_to_submit > 0: # Ensure there's actually something to submit
+                    new_future = executor.submit(vectorized_trial, current_batch_to_submit)
+                    active_futures.add(new_future)
+                    submitted_trials_total += current_batch_to_submit
 
     logger.join(timeout=5)
     return solutions.value / trials_run.value if trials_run.value > 0 else 0
@@ -132,4 +177,4 @@ def compute(total_trials, num_workers=24, batch_size=1000000, log_interval=10, s
 if __name__ == "__main__":
     total_trials = 15000000000000
     result = compute(total_trials)
-    logging.info(f"Final probability: {result:.7f}")
+    logging.info(f"Final probability: {result:.12f}")
