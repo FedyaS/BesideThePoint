@@ -8,14 +8,23 @@ from datetime import datetime
 # Configure basic logging for the logger module itself (e.g., for errors within the logger)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+# Define the data directory
+DATA_DIR = "data"
+
 class CentralizedLogger:
     def __init__(self, compute_type, total_trials, log_interval_sec, save_interval_sec, progress_filename_prefix="progress", performance_log_filename_prefix="performance"):
         self.compute_type = compute_type
         self.total_trials = total_trials
         self.log_interval_sec = log_interval_sec
         self.save_interval_sec = save_interval_sec
-        self.progress_filename = f"{progress_filename_prefix}-{self.compute_type}.json"
-        self.performance_log_filename = f"{performance_log_filename_prefix}-{self.compute_type}.csv"
+
+        # Ensure the data directory exists
+        if not os.path.exists(DATA_DIR):
+            os.makedirs(DATA_DIR)
+            logging.info(f"Created directory: {DATA_DIR}")
+
+        self.progress_filename = os.path.join(DATA_DIR, f"{progress_filename_prefix}-{self.compute_type}.json")
+        self.performance_log_filename = os.path.join(DATA_DIR, f"{performance_log_filename_prefix}-{self.compute_type}.csv")
 
         self.progress_state = {'solutions': 0, 'trials_run': 0}
         self._lock = threading.Lock()

@@ -32,7 +32,7 @@ def run_trials_worker(logger_instance: CentralizedLogger, stop_event: threading.
         logger_instance.update_progress(local_solutions, local_trials_count)
 
 
-def compute(total_trials, num_workers=24, log_interval=10, save_interval=60):
+def compute(total_trials, num_workers=24, log_interval=10, save_interval=20):
     """
     Compute trials in parallel with periodic logging and saving, using CentralizedLogger.
     Workers are signaled to stop via a threading.Event.

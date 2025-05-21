@@ -2,6 +2,10 @@ import datetime
 import glob
 import csv
 import math # Added for math.isinf
+import os # Added for os.path.join
+
+# Define the data directory
+DATA_DIR = "data"
 
 
 def parse_time(timestr):
@@ -122,10 +126,12 @@ def format_time_to_1b(seconds):
 
 def main():
     all_metrics_data = []
-    csv_files = sorted(glob.glob("performance-*.csv")) # Sort for consistent processing order initially
+    # Look for CSV files in the data directory
+    csv_files_path = os.path.join(DATA_DIR, "performance-*.csv")
+    csv_files = sorted(glob.glob(csv_files_path))
 
     if not csv_files:
-        print("No 'performance-*.csv' files found in the directory.")
+        print(f"No 'performance-*.csv' files found in the '{DATA_DIR}' directory.")
         return
 
     print("Processing performance files...")
@@ -173,15 +179,24 @@ def main():
     report_output_lines.append(header_line)
     report_output_lines.append("-+-".join("-" * col_widths[i] for i in range(len(col_widths)))) # Separator
 
-    for row in table_rows[1:]:
-        report_output_lines.append(" | ".join(str(cell).ljust(col_widths[i]) for i, cell in enumerate(row)))
+    for row_idx, row in enumerate(table_rows[1:]):
+        formatted_cells = []
+        for i, cell in enumerate(row):
+            # Headers are at index 0 of table_rows, data starts from index 1
+            header_name = table_rows[0][i] 
+            if header_name == "Iterations per Second" or header_name == "Time to 1B Iterations":
+                formatted_cells.append(str(cell).rjust(col_widths[i]))
+            else:
+                formatted_cells.append(str(cell).ljust(col_widths[i]))
+        report_output_lines.append(" | ".join(formatted_cells))
     
     final_report = "\n".join(report_output_lines)
 
     print("\n--- Performance Report ---")
     print(final_report)
 
-    report_file_path = "performance-report.txt"
+    # Save the report to the data directory
+    report_file_path = os.path.join(DATA_DIR, "performance-report.txt")
     with open(report_file_path, "w", encoding='utf-8') as report_file: # Added encoding
         report_file.write("--- Performance Report ---\n")
         report_file.write(final_report)

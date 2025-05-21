@@ -100,7 +100,7 @@ def compute(total_trials, num_workers=24, batch_size=10000, log_interval=10, sav
     return logger.get_final_probability()
 
 if __name__ == "__main__":
-    total_trials = 500_000_000 # Example total trials
+    total_trials = 500_000_000_000 # Example total trials
     # num_w = 4 # Example for testing
     # batch_s = 10_000 # Example for testing
     # log_i = 2 # Example for testing
