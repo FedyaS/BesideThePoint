@@ -3,7 +3,7 @@ import logging
 import os
 import threading
 import time
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, TimeoutError
 import argparse
 from BesideThePoint import trial
 from performance_logger import CentralizedLogger
@@ -76,7 +76,7 @@ def compute(total_trials, num_workers=24, log_interval=10, save_interval=20):
             for future in futures:
                 try:
                     future.result(timeout=log_interval + save_interval + 5)
-                except concurrent.futures.TimeoutError:
+                except TimeoutError:
                     logging.warning(f"[{logger.compute_type}] Worker thread did not complete in expected time after total trials reached.")
                 except Exception as e:
                     logging.error(f"[{logger.compute_type}] Worker thread raised an exception during shutdown: {e}")
