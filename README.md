@@ -78,4 +78,79 @@ and did not require me to handle multiprocessing myself.
 You can see the performance data I got and [performance report](./example_data/performance-report.txt) in `example_data/`.
 
 ## Run It Yourself
-Run `.venv\Scripts\activate` on Windows to activate venv
+
+1.  **Create and Activate a Virtual Environment:**
+    *   **Windows:**
+        ```bash
+        python -m venv .venv
+        .venv\\Scripts\\activate
+        ```
+    *   **macOS/Linux:**
+        ```bash
+        python3 -m venv .venv
+        source .venv/bin/activate
+        ```
+
+2.  **Install Dependencies:**
+    *   Install the required packages:
+        ```bash
+        pip install -r requirements.txt
+        ```
+    *   For hardware specifications in the performance report (optional):
+        ```bash
+        pip install -r optional-requirements.txt
+        ```
+
+3.  **CUDA Setup (for `ComputeCupy.py`):**
+    *   Ensure you have an NVIDIA GPU and have [CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) installed and configured correctly. `ComputeCupy.py` will not work without it (you can still run CPU based computations with other scripts).
+
+4.  **Running the Code:**
+
+    *   **Visual Representation (`VisualBesideThePoint.py`):**
+        *   Run `python VisualBesideThePoint.py` to see a visual of random points and the solution.
+        *   Press `Enter` in the console to generate a new set of random points.
+
+    *   **Interactive Script Runner (`interactive_run.py`):**
+        *   This is the recommended way to run computations and parse results.
+        *   Run `python @interactive_run.py`.
+        *   Follow the on-screen prompts to select which compute scripts to run, for how many trials, and with how many CPU workers.
+        *   You may simply ctrl + c or end execution if you do not want to wait for all trials to run, the data will be saved regardless. 
+
+    *   **Parsing Performance Data (`ParsePerformance.py`):**
+        *   After running compute scripts (either directly or via `@run.py` / `@interactive_run.py`), you need to parse the generated data.
+        *   You can do this via the `@interactive_run.py` script (recommended) or by directly running `python ParsePerformance.py`.
+
+    *   **Compute Scripts (Directly):**
+        *   You can run individual compute scripts. They generally accept the following arguments:
+            *   `--total_trials`: Number of simulations to run.
+            *   `--num_workers`: (For parallel scripts like `ComputeNumpy.py`, `ComputeMultiprocess.py`, `ComputeMultithread.py`) Number of worker processes/threads.
+        *   Example: `python ComputeNumpy.py --total_trials 1000000 --num_workers 8`
+
+    *   **Master Script Runner (`run.py`):**
+        *   `run.py` is a command-line interface to execute the various scripts.
+        *   Usage: `python run.py [script_alias] [options]`
+        *   To see available script aliases and options: `python run.py --help`
+        *   **Global Options (can be overridden by script-specific options):**
+            *   `--trials TRIALS`: Default number of trials for compute scripts (default: 10,000,000,000).
+            *   `--workers WORKERS`: Default number of workers for parallel compute scripts (default: 12).
+        *   **Script Aliases & Their Specific Options:**
+            *   `computenumpy`: Runs `ComputeNumpy.py`.
+                *   `--trials TRIALS`: Number of trials.
+                *   `--workers WORKERS`: Number of workers.
+            *   `computemultiproc`: Runs `ComputeMultiprocess.py`.
+                *   `--trials TRIALS`: Number of trials.
+                *   `--workers WORKERS`: Number of workers.
+            *   `computemultithread`: Runs `ComputeMultithread.py`.
+                *   `--trials TRIALS`: Number of trials.
+                *   `--workers WORKERS`: Number of workers.
+            *   `computesimple`: Runs `ComputeSimple.py`.
+                *   `--trials TRIALS`: Number of trials.
+            *   `computecupy`: Runs `ComputeCupy.py`.
+                *   `--trials TRIALS`: Number of trials.
+            *   `visualize`: Runs `VisualBesideThePoint.py` (no additional arguments).
+            *   `parseperformance`: Runs `ParsePerformance.py` (no additional arguments).
+        *   Example: `python run.py computenumpy --trials 10000000 --workers 8`
+        *   Example: `python run.py computecupy --trials 5000000000`
+
+5.  **Output:**
+    *   All raw data files and the `performance-report.txt` will be saved in the `data/` directory.
