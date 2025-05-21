@@ -87,6 +87,6 @@ def compute(total_trials, num_workers=24, log_interval=10, save_interval=20):
 
 
 if __name__ == "__main__":
-    total_trials = 500_000_000
+    total_trials = 15_000_000_000_000
     result = compute(total_trials)
     logging.info(f"Final probability (Multithread): {result:.10f}")

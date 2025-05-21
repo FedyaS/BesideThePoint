@@ -60,7 +60,7 @@ def compute(total_trials, batch_size=10000, log_interval=10, save_interval=20):
     return logger.get_final_probability()
 
 if __name__ == "__main__":
-    total_trials_to_run = 15_000_000_000  # Original value from old script
+    total_trials_to_run = 15_000_000_000_000  # Original value from old script
     
     # Example with smaller values for quick testing:
     # total_trials_to_run = 50000
