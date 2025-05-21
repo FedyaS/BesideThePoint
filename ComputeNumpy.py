@@ -7,6 +7,7 @@ import logging
 from concurrent.futures import ProcessPoolExecutor
 import concurrent.futures
 from multiprocessing import Value # Still needed for worker communication
+import argparse # Added for command-line argument parsing
 
 from performance_logger import CentralizedLogger # Import the new logger
 
@@ -146,12 +147,14 @@ def compute(total_trials, num_workers=12, batch_size=1000000, log_interval=10, s
     return logger.get_final_probability()
 
 if __name__ == "__main__":
-    total_trials = 15_000_000_000_000 # Example total trials
-    # total_trials = 200_000_000 # Smaller value for testing
-    # num_w = 4
-    # batch_s = 1_000_000
-    # log_i = 2
-    # save_i = 5
-    # result = compute(total_trials, num_workers=num_w, batch_size=batch_s, log_interval=log_i, save_interval=save_i)
-    result = compute(total_trials)
+    parser = argparse.ArgumentParser(description="Run Numpy-based computation for the BesideThePoint problem.")
+    parser.add_argument('--total_trials', type=int, default=15_000_000_000_000,
+                        help='Total number of trials to perform.')
+    parser.add_argument('--num_workers', type=int, default=12,
+                        help='Number of worker processes. Defaults to (12).')
+    # Other parameters like batch_size, log_interval, save_interval will use defaults from the compute function.
+    args = parser.parse_args()
+
+    result = compute(args.total_trials, num_workers=args.num_workers)
+
     logging.info(f"Final probability (NumpyCPU): {result:.12f}")

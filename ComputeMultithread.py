@@ -4,6 +4,7 @@ import os
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
+import argparse
 from BesideThePoint import trial
 from performance_logger import CentralizedLogger
 
@@ -87,6 +88,13 @@ def compute(total_trials, num_workers=24, log_interval=10, save_interval=20):
 
 
 if __name__ == "__main__":
-    total_trials = 15_000_000_000_000
-    result = compute(total_trials)
+    parser = argparse.ArgumentParser(description="Run multithread-based computation for the BesideThePoint problem.")
+    parser.add_argument('--total_trials', type=int, default=15_000_000_000_000,
+                        help='Total number of trials to perform.')
+    parser.add_argument('--num_workers', type=int,
+                        help='Number of worker threads. Defaults to (12).')
+    args = parser.parse_args()
+
+    result = compute(args.total_trials, num_workers=args.num_workers)
+
     logging.info(f"Final probability (Multithread): {result:.10f}")

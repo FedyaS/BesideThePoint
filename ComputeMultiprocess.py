@@ -2,6 +2,7 @@ import logging
 import time # Keep time for potential delays if needed, but not for main loop logic
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from multiprocessing import Value # For shared counters
+import argparse # Added for command-line argument parsing
 from BesideThePoint import trial
 from performance_logger import CentralizedLogger
 import concurrent.futures # For as_completed
@@ -100,11 +101,14 @@ def compute(total_trials, num_workers=24, batch_size=10000, log_interval=10, sav
     return logger.get_final_probability()
 
 if __name__ == "__main__":
-    total_trials = 15_000_000_000_000 # Example total trials
-    # num_w = 4 # Example for testing
-    # batch_s = 10_000 # Example for testing
-    # log_i = 2 # Example for testing
-    # save_i = 5 # Example for testing
-    # result = compute(total_trials, num_workers=num_w, batch_size=batch_s, log_interval=log_i, save_interval=save_i)
-    result = compute(total_trials) # Uses defaults: num_workers=24, batch_size=10000
+    parser = argparse.ArgumentParser(description="Run multiprocess-based computation for the BesideThePoint problem.")
+    parser.add_argument('--total_trials', type=int, default=15_000_000_000_000,
+                        help='Total number of trials to perform.')
+    parser.add_argument('--num_workers', type=int, default=12,
+                        help='Number of worker processes. Defaults to (12).')
+    # Other parameters like batch_size, log_interval, save_interval will use defaults from the compute function.
+    args = parser.parse_args()
+
+    result = compute(args.total_trials, num_workers=args.num_workers)
+
     logging.info(f"Final probability (Multiprocess): {result:.10f}")

@@ -1,6 +1,7 @@
 import logging
 from performance_logger import CentralizedLogger
 from BesideThePoint import trial # Assuming this is the correct import for the trial function
+import argparse # Added for command-line argument parsing
 
 # Configure logging for this script (e.g., final result, errors outside logger)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -60,17 +61,11 @@ def compute(total_trials, batch_size=10000, log_interval=10, save_interval=20):
     return logger.get_final_probability()
 
 if __name__ == "__main__":
-    total_trials_to_run = 15_000_000_000_000  # Original value from old script
-    
-    # Example with smaller values for quick testing:
-    # total_trials_to_run = 50000
-    # test_batch_size = 10000
-    # test_log_interval = 2
-    # test_save_interval = 5
-    # result = compute(total_trials_to_run, 
-    #                  batch_size=test_batch_size, 
-    #                  log_interval=test_log_interval, 
-    #                  save_interval=test_save_interval)
+    parser = argparse.ArgumentParser(description="Run simple loop-based computation for the BesideThePoint problem.")
+    parser.add_argument('--total_trials', type=int, default=15_000_000_000_000,
+                        help='Total number of trials to perform.')
+    # batch_size, log_interval, save_interval will use defaults from the compute function.
+    args = parser.parse_args()
 
-    result = compute(total_trials_to_run)
+    result = compute(args.total_trials)
     logging.info(f"Final probability (SimpleCPU): {result:.10f}")

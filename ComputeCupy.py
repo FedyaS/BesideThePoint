@@ -4,6 +4,7 @@ import cupy as cp
 import logging
 # import threading # No longer directly used here
 # import time # No longer directly used here
+import argparse # Added for command-line argument parsing
 
 from performance_logger import CentralizedLogger # Import the new logger
 
@@ -107,13 +108,12 @@ def compute(total_trials, batch_size=10_000_000, log_interval=10, save_interval=
     return logger.get_final_probability()
 
 if __name__ == "__main__":
-    total_trials = 15_000_000_000_000
-    # For testing, smaller numbers might be useful:
-    # total_trials = 100_000_000
-    # batch_s = 10_000_000
-    # log_i = 5
-    # save_i = 10
-    # result = compute(total_trials, batch_size=batch_s, log_interval=log_i, save_interval=save_i)
-    
-    result = compute(total_trials)
+    parser = argparse.ArgumentParser(description="Run CuPy-based GPU computation for the BesideThePoint problem.")
+    parser.add_argument('--total_trials', type=int, default=15_000_000_000_000,
+                        help='Total number of trials to perform.')
+    # batch_size, log_interval, save_interval will use defaults from the compute function.
+    args = parser.parse_args()
+        
+    # result = compute(total_trials)
+    result = compute(args.total_trials)
     logging.info(f"Final probability (CupyGPU): {result:.12f}")
