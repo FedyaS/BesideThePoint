@@ -30,7 +30,7 @@ def trials_and_time_for_precision(decimal_places, trials_per_second):
     # Format time string
     time_str = ""
     if years > 0:
-        time_str += f"{years} year{'s' if years != 1 else ''}"
+        time_str += f"{years:,} year{'s' if years != 1 else ''}"
     if months > 0:
         if years > 0:
             time_str += " and "
