@@ -66,7 +66,7 @@ def compute(total_trials, num_workers=12, batch_size=1000000, log_interval=10, s
     """Compute trials using NumPy vectorization and multiprocessing with CentralizedLogger."""
     
     logger = CentralizedLogger(
-        compute_type="NumpyCPU",
+        compute_type=f"NumpyCPU{num_workers}Threads",
         total_trials=total_trials,
         log_interval_sec=log_interval,
         save_interval_sec=save_interval
