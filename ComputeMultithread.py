@@ -47,7 +47,7 @@ def compute(total_trials, num_workers=24, log_interval=10, save_interval=60):
     """
     
     logger = CentralizedLogger(
-        compute_type=f"Multithread2{num_workers}Threads",
+        compute_type=f"Multithread{num_workers}Threads",
         total_trials=total_trials,
         log_interval_sec=log_interval,
         save_interval_sec=save_interval
@@ -100,4 +100,4 @@ def compute(total_trials, num_workers=24, log_interval=10, save_interval=60):
 if __name__ == "__main__":
     total_trials = 500_000_000
     result = compute(total_trials)
-    logging.info(f"Final probability (Multithread2): {result:.10f}")
+    logging.info(f"Final probability (Multithread): {result:.10f}")
