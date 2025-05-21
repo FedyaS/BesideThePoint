@@ -20,7 +20,7 @@ class TestCentralizedLogger(unittest.TestCase):
     def setUp(self):
         # Ensure a clean state for filenames
         self.progress_file = f"{self.PROGRESS_PREFIX}-{self.TEST_COMPUTE_TYPE}.json"
-        self.performance_file = f"{self.PERFORMANCE_PREFIX}-{self.TEST_COMPUTE_TYPE}.txt"
+        self.performance_file = f"{self.PERFORMANCE_PREFIX}-{self.TEST_COMPUTE_TYPE}.csv"
         self._cleanup_files() # Clean up before each test
 
     def tearDown(self):

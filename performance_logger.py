@@ -15,7 +15,7 @@ class CentralizedLogger:
         self.log_interval_sec = log_interval_sec
         self.save_interval_sec = save_interval_sec
         self.progress_filename = f"{progress_filename_prefix}-{self.compute_type}.json"
-        self.performance_log_filename = f"{performance_log_filename_prefix}-{self.compute_type}.txt"
+        self.performance_log_filename = f"{performance_log_filename_prefix}-{self.compute_type}.csv"
 
         self.progress_state = {'solutions': 0, 'trials_run': 0}
         self._lock = threading.Lock()
@@ -32,7 +32,7 @@ class CentralizedLogger:
                 with self._lock:
                     self.progress_state['solutions'] = data.get('count_solutions', 0)
                     self.progress_state['trials_run'] = data.get('count_run', 0)
-                logging.info(f"[{self.compute_type}] Progress loaded from {self.progress_filename}: {self.progress_state}")
+                # logging.info(f"[{self.compute_type}] Progress loaded from {self.progress_filename}: {self.progress_state}")
             except json.JSONDecodeError:
                 logging.error(f"[{self.compute_type}] Error decoding JSON from {self.progress_filename}. Starting fresh.")
             except Exception as e:
@@ -50,7 +50,7 @@ class CentralizedLogger:
         try:
             with open(self.progress_filename, 'w') as f:
                 json.dump(data_to_save, f)
-            logging.info(f"[{self.compute_type}] Progress saved to {self.progress_filename}: {data_to_save}") # Usually too verbose for interval saving
+            # logging.info(f"[{self.compute_type}] Progress saved to {self.progress_filename}: {data_to_save}") # Usually too verbose for interval saving
         except Exception as e:
             logging.error(f"[{self.compute_type}] Error saving progress to {self.progress_filename}: {e}")
 
