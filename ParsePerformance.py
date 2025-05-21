@@ -3,6 +3,19 @@ import glob
 import csv
 import math # Added for math.isinf
 import os # Added for os.path.join
+import platform
+try:
+    import psutil
+except ImportError:
+    psutil = None
+try:
+    import GPUtil
+except ImportError:
+    GPUtil = None
+try:
+    import cpuinfo
+except ImportError:
+    cpuinfo = None
 
 # Define the data directory
 DATA_DIR = "data"
@@ -124,7 +137,66 @@ def format_time_to_1b(seconds):
     return f"{mm:02d} min, {ss:05.2f} sec"
 
 
+def get_machine_specs():
+    specs = {
+        "os": "N/A",
+        "cpu": "N/A",
+        "gpus": "N/A"
+    }
+    try:
+        specs["os"] = f"{platform.system()} {platform.release()}"
+    except Exception as e:
+        print(f"Warning: Could not retrieve OS information: {e}")
+
+    # Try to get CPU brand string using cpuinfo
+    if cpuinfo:
+        try:
+            info = cpuinfo.get_cpu_info()
+            if 'brand_raw' in info:
+                specs["cpu"] = info['brand_raw']
+            else:
+                # Fallback if brand_raw is not in cpuinfo's output
+                print("Warning: 'brand_raw' not found in cpuinfo output. Falling back to platform.processor().")
+                specs["cpu"] = platform.processor() if platform.processor() else "N/A (platform.processor() empty)"
+        except Exception as e:
+            print(f"Warning: Could not retrieve CPU information using cpuinfo: {e}. Falling back to platform.processor().")
+            specs["cpu"] = platform.processor() if platform.processor() else "N/A (platform.processor() empty / cpuinfo error)"
+    elif psutil: # Fallback to psutil if cpuinfo is not available (though we know it's not ideal for brand string)
+        try:
+            # This was the problematic line, psutil.cpu_info() doesn't exist.
+            # We are keeping psutil for other potential uses but relying on platform or cpuinfo for CPU name.
+            # For now, if cpuinfo is not present, we directly use platform.processor()
+            # as psutil doesn't have a direct equivalent for the brand string.
+            cpu_name = platform.processor()
+            if cpu_name:
+                specs["cpu"] = cpu_name
+            else:
+                specs["cpu"] = "N/A (platform.processor() returned empty)"
+                print("Warning: platform.processor() returned an empty string for CPU info.")
+        except Exception as e:
+            print(f"Warning: Could not retrieve CPU information using platform.processor(): {e}")
+            specs["cpu"] = "N/A (Error with platform.processor())"
+    else: # Final fallback if neither cpuinfo nor psutil (for platform.processor) is available
+        specs["cpu"] = platform.processor() if platform.processor() else "N/A (cpuinfo/psutil not available, platform.processor() empty)"
+        if not platform.processor():
+             print("Warning: cpuinfo and psutil not available, and platform.processor() returned an empty string for CPU info.")
+
+    if GPUtil:
+        try:
+            gpus = GPUtil.getGPUs()
+            if gpus:
+                specs["gpus"] = ", ".join([gpu.name for gpu in gpus])
+            else:
+                specs["gpus"] = "No NVIDIA GPUs found"
+        except Exception as e:
+            print(f"Warning: Could not retrieve GPU information: {e}")
+            specs["gpus"] = "Error retrieving GPU info"
+        
+    return specs
+
+
 def main():
+    machine_specs = get_machine_specs()
     all_metrics_data = []
     # Look for CSV files in the data directory
     csv_files_path = os.path.join(DATA_DIR, "performance-*.csv")
@@ -193,12 +265,18 @@ def main():
     final_report = "\n".join(report_output_lines)
 
     print("\n--- Performance Report ---")
+    print(f"OS: {machine_specs['os']}")
+    print(f"CPU: {machine_specs['cpu']}")
+    print(f"GPU(s): {machine_specs['gpus']}")
     print(final_report)
 
     # Save the report to the data directory
     report_file_path = os.path.join(DATA_DIR, "performance-report.txt")
     with open(report_file_path, "w", encoding='utf-8') as report_file: # Added encoding
         report_file.write("--- Performance Report ---\n")
+        report_file.write(f"OS: {machine_specs['os']}\n")
+        report_file.write(f"CPU: {machine_specs['cpu']}\n")
+        report_file.write(f"GPU(s): {machine_specs['gpus']}\n")
         report_file.write(final_report)
         report_file.write("\n\nNote: 'N/A (or 0 IPS)' for Time to 1B Iterations indicates effectively zero or non-positive iterations per second.")
     

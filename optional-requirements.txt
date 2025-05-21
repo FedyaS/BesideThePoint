@@ -1,0 +1,3 @@
+# Optional (outputs your machine specs in report)
+psutil==7.0.0
+GPUtil==1.4.0
