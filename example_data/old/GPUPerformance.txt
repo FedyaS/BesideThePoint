@@ -1,4 +1,3 @@
-C:\Users\fedse\Documents\Github\BesideThePoint\.venv\Scripts\python.exe C:\Users\fedse\Documents\Github\BesideThePoint\ComputeCupy.py
 2025-05-16 15:30:22,887 - Loaded - Trials: 0 | Solutions: 0 | Probability: 0.000000000000
 2025-05-16 15:30:22,887 - Logger thread started.
 2025-05-16 15:30:32,888 - Progress - Trials: 1,350,000,000 | Solutions: 663,423,810 | Probability: 0.491425044444
