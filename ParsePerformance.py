@@ -40,18 +40,15 @@ def parse_time(timestr):
 def calculate_metrics(filename):
     timestamps = []
     trials_run_list = []
-    solutions_list = [] # New: To store solutions count from CSV
-    # p_hat_assumed is now global P_HAT_ASSUMED
+    solutions_list = []
 
-    with open(filename, 'r', encoding='utf-8') as file: # Added encoding
+    with open(filename, 'r', encoding='utf-8') as file:
         reader = csv.DictReader(file)
         for i, row in enumerate(reader):
-            line_num = i + 2 # 1 for header, 1 for 0-indexed enumerate
+            line_num = i + 2
             try:
-                # Strip whitespace from keys and values
                 current_row_data = {k.strip(): v.strip() for k, v in row.items()}
 
-                # Extended check for required columns
                 required_cols = ["Timestamp", "TrialsRun", "SolutionsFound"]
                 missing_cols = [col for col in required_cols if col not in current_row_data]
                 if missing_cols:
@@ -60,87 +57,100 @@ def calculate_metrics(filename):
 
                 timestamp_str = current_row_data["Timestamp"]
                 trials_run_str = current_row_data["TrialsRun"]
-                solutions_str = current_row_data["SolutionsFound"] # New
+                solutions_str = current_row_data["SolutionsFound"]
 
-                # Check for empty values
-                if not timestamp_str:
-                    print(f"Warning: Empty timestamp in {filename} at line {line_num}. Skipping row: {row}")
-                    continue
-                if not trials_run_str:
-                    print(f"Warning: Empty TrialsRun in {filename} at line {line_num}. Skipping row: {row}")
-                    continue
-                if not solutions_str: # New
-                    print(f"Warning: Empty Solutions in {filename} at line {line_num}. Skipping row: {row}")
+                if not timestamp_str or not trials_run_str or not solutions_str:
+                    print(f"Warning: Empty values in {filename} at line {line_num}. Skipping row: {row}")
                     continue
                 
-                if ' ' in trials_run_str:
-                     print(f"Warning: Space found in 'TrialsRun' field in {filename} at line {line_num}. Value: '{trials_run_str}'. Skipping row: {row}")
-                     continue
-                if ' ' in solutions_str: # New: Check for spaces in solutions
-                     print(f"Warning: Space found in 'Solutions' field in {filename} at line {line_num}. Value: '{solutions_str}'. Skipping row: {row}")
-                     continue
+                if ' ' in trials_run_str or ' ' in solutions_str:
+                    print(f"Warning: Space found in numeric fields in {filename} at line {line_num}. Skipping row: {row}")
+                    continue
 
                 parsed_timestamp = parse_time(timestamp_str)
-                parsed_trials_run = int(trials_run_str.replace(',', '')) # Allow commas in numbers
-                parsed_solutions = int(solutions_str.replace(',', '')) # New: Parse solutions
+                parsed_trials_run = int(trials_run_str.replace(',', ''))
+                parsed_solutions = int(solutions_str.replace(',', ''))
 
                 timestamps.append(parsed_timestamp)
                 trials_run_list.append(parsed_trials_run)
-                solutions_list.append(parsed_solutions) # New: Store solutions
+                solutions_list.append(parsed_solutions)
 
-            except ValueError as e: # Handles errors from parse_time and int()
+            except ValueError as e:
                 print(f"Warning: Could not parse data in {filename} at line {line_num}. Error: {e}. Skipping row: {row}")
                 continue
             except Exception as e:
                 print(f"Warning: An unexpected error occurred in {filename} at line {line_num}. Error: {e}. Skipping row: {row}")
                 continue
     
-    # Extended check for enough data points
     if len(timestamps) < 2 or len(trials_run_list) < 2 or len(solutions_list) < 2:
-        print(f"Warning: Not enough valid data points in {filename} to calculate performance. Collected {len(timestamps)} timestamps, {len(trials_run_list)} trial entries, {len(solutions_list)} solution entries.")
+        print(f"Warning: Not enough valid data points in {filename} to calculate performance.")
         return None
 
-    # Combine and sort data by timestamp (now includes solutions)
+    # Combine and sort data by timestamp
     combined_data = sorted(zip(timestamps, trials_run_list, solutions_list))
     
-    # Filter out initial zero trial entries
-    # Find the first index where trials are greater than 0
-    first_meaningful_index = -1
+    # Group data into separate runs based on 20-second gaps
+    runs = []
+    current_run = []
+    
     for i in range(len(combined_data)):
-        if combined_data[i][1] > 0: # Check trials (index 1)
-            first_meaningful_index = i
-            break
+        if not current_run:
+            current_run.append(combined_data[i])
+        else:
+            time_diff = (combined_data[i][0] - current_run[-1][0]).total_seconds()
+            if time_diff > 20:  # Gap of more than 20 seconds indicates a new run
+                if len(current_run) >= 2:  # Only add runs with at least 2 points
+                    runs.append(current_run)
+                current_run = [combined_data[i]]
+            else:
+                current_run.append(combined_data[i])
     
-    # If all trials are zero or only one meaningful entry, cannot calculate
-    if first_meaningful_index == -1 or first_meaningful_index >= len(combined_data) - 1:
-        print(f"Warning: Not enough non-zero trial data points or only one such point in {filename} to calculate performance.")
+    # Add the last run if it has enough points
+    if len(current_run) >= 2:
+        runs.append(current_run)
+
+    if not runs:
+        print(f"Warning: No valid runs found in {filename} after grouping by time gaps.")
         return None
 
-    initial_timestamp = combined_data[first_meaningful_index][0]
-    initial_trials = combined_data[first_meaningful_index][1]
-    # initial_solutions = combined_data[first_meaningful_index][2] # Available if needed
-    
-    # Use the very last entry for final timestamp, trials, and solutions
-    final_timestamp = combined_data[-1][0]
-    final_trials_raw_last_entry = combined_data[-1][1]
-    final_solutions_raw_last_entry = combined_data[-1][2]
+    # Calculate metrics for each run
+    total_trials_processed = 0
+    total_time_seconds = 0
+    final_solutions = 0
+    final_trials = 0
 
-    if initial_timestamp == final_timestamp and initial_trials == final_trials_raw_last_entry:
-        print(f"Warning: Initial and final data points are identical in {filename} after filtering. Cannot calculate rate.")
-        return None
+    for run in runs:
+        # Filter out initial zero trial entries for this run
+        first_meaningful_index = -1
+        for i in range(len(run)):
+            if run[i][1] > 0:  # Check trials (index 1)
+                first_meaningful_index = i
+                break
+        
+        if first_meaningful_index == -1 or first_meaningful_index >= len(run) - 1:
+            continue  # Skip this run if no meaningful data
 
-    total_time_seconds = (final_timestamp - initial_timestamp).total_seconds()
-    # total_trials_processed is based on the difference from first meaningful to last
-    total_trials_processed = final_trials_raw_last_entry - initial_trials
+        initial_timestamp = run[first_meaningful_index][0]
+        initial_trials = run[first_meaningful_index][1]
+        
+        final_timestamp = run[-1][0]
+        final_trials_raw = run[-1][1]
+        final_solutions_raw = run[-1][2]
 
+        if initial_timestamp == final_timestamp and initial_trials == final_trials_raw:
+            continue  # Skip this run if no progress
 
-    if total_time_seconds <= 0:
-        print(f"Warning: Calculated total time is zero or negative ({total_time_seconds}s) in {filename}. Check timestamps and data consistency.")
-        return None
-    if total_trials_processed <= 0:
-        # This condition might be too strict if final_trials_raw_last_entry can be less than initial_trials due to data issues.
-        # However, given the sorting and selection of first_meaningful_index, this should typically mean no progress.
-        print(f"Warning: Calculated total trials processed (final_trials_raw_last_entry - initial_trials) is zero or negative ({total_trials_processed}) in {filename}.")
+        run_time = (final_timestamp - initial_timestamp).total_seconds()
+        run_trials = final_trials_raw - initial_trials
+
+        if run_time > 0 and run_trials > 0:
+            total_time_seconds += run_time
+            total_trials_processed += run_trials
+            final_solutions = final_solutions_raw
+            final_trials = final_trials_raw
+
+    if total_time_seconds <= 0 or total_trials_processed <= 0:
+        print(f"Warning: Invalid total time or trials after combining runs in {filename}.")
         return None
 
     iterations_per_second = total_trials_processed / total_time_seconds
@@ -151,11 +161,9 @@ def calculate_metrics(filename):
     time_to_10dp = "N/A"
 
     if standard_error:
-        # Calculate current SE based on final_trials_raw_last_entry and P_HAT_ASSUMED
-        current_solutions_for_se = P_HAT_ASSUMED * final_trials_raw_last_entry
-        current_se = standard_error(current_solutions_for_se, final_trials_raw_last_entry)
+        current_solutions_for_se = P_HAT_ASSUMED * final_trials
+        current_se = standard_error(current_solutions_for_se, final_trials)
 
-        # Calculate SE after 60 seconds
         trials_in_60s = iterations_per_second * 60
         solutions_in_60s_for_se = P_HAT_ASSUMED * trials_in_60s
         se_after_60s = standard_error(solutions_in_60s_for_se, trials_in_60s)
@@ -166,7 +174,7 @@ def calculate_metrics(filename):
     elif iterations_per_second <= 0:
         time_to_10dp = "N/A (0 IPS)"
     
-    basename = os.path.basename(filename) # Robust compute_type derivation
+    basename = os.path.basename(filename)
     compute_type_val = basename.replace("performance-", "").replace(".csv", "")
 
     return {
@@ -176,8 +184,8 @@ def calculate_metrics(filename):
         "current_se": current_se,
         "se_after_60s": se_after_60s,
         "time_to_10dp": time_to_10dp,
-        "last_entry_solutions": final_solutions_raw_last_entry, # New for probability and overall
-        "last_entry_trials": final_trials_raw_last_entry     # New for probability and overall
+        "last_entry_solutions": final_solutions,
+        "last_entry_trials": final_trials
     }
 
 def format_time_to_1b(seconds):

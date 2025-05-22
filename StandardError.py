@@ -34,7 +34,7 @@ def trials_and_time_for_precision(decimal_places, trials_per_second):
     if months > 0:
         if years > 0:
             time_str += " and "
-        time_str += f"{months} month{'s' if months != 1 else ''}"
+        time_str += f"{months} month{'s' if months != 1 else ' '}"
     if not time_str:
         time_str = "less than 1 month"
     

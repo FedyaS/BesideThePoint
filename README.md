@@ -1,4 +1,6 @@
 # BesideThePoint
+Note: Most of this was vibe coded with Cursor.
+Hence the code quality is lower than I would use for a long-term project.
 
 ## Problem Overview
 This project is an attempt to solve the [Jane Street Beside The Point Problem](https://www.janestreet.com/puzzles/beside-the-point-index/) using the Brutest of Forces.
